@@ -1,5 +1,9 @@
+import re
+
 from bs4 import BeautifulSoup
 import requests
+import pandas as pd
+from datetime import datetime
 
 
 def parse_news_page(url="https://rospotrebnadzor.ru/about/info/news/"):
@@ -57,7 +61,6 @@ def page_indexer(data=indexer(), substring="/about/info/news/news_details.php?EL
     array = []
     for i in range(len(data)):
         if substring in data[i]:
-            print(data[i])
             array.append(data[i][54:59])  # specific position because we are sure
 
     return array
@@ -70,3 +73,28 @@ def url_linkage(page_index=page_indexer()):
         urls.append(url_style + page_index[i])
 
     return urls
+
+
+def parse_news(urls=url_linkage(), export=True):
+    region = "Алтайский край"
+    per_day = []
+    date = []
+    for i in range(len(urls)):
+        response = requests.get(urls[i])
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        data = soup.select('div > div > div > div > p', class_="news-detail")
+
+        data = list(map(str, data))
+        date.append(data[0][16:26])
+
+        for j in range(len(data)):
+            if region in data[j]:
+                per_day.append(re.findall('\d+', data[j])[1])
+    #collected_data = pd.DataFrame(date, per_day)
+    #print(collected_data)
+    #if export == True:
+    #    collected_data.to_csv('stats_{0}.csv'.format(datetime.now().strftime("%d-%m-%Y %H-%M-%S")), index=False)
+
+
+parse_news()
