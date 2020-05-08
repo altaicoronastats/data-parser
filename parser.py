@@ -86,15 +86,18 @@ def parse_news(urls=url_linkage(), export=True):
         data = soup.select('div > div > div > div > p', class_="news-detail")
 
         data = list(map(str, data))
-        date.append(data[0][16:26])
 
         for j in range(len(data)):
             if region in data[j]:
+                date.append(data[0][16:26])
                 per_day.append(re.findall('\d+', data[j])[1])
-    #collected_data = pd.DataFrame(date, per_day)
-    #print(collected_data)
-    #if export == True:
-    #    collected_data.to_csv('stats_{0}.csv'.format(datetime.now().strftime("%d-%m-%Y %H-%M-%S")), index=False)
+
+    print(date)
+    print(per_day)
+    collected_data = pd.DataFrame({"date": date, "per day": per_day})
+    print(collected_data)
+    if export == True:
+        collected_data.to_csv('stats_{0}.csv'.format(datetime.now().strftime("%d-%m-%Y %H-%M-%S")), index=False)
 
 
 parse_news()
