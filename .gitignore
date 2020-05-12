@@ -324,3 +324,4 @@ pip-selfcheck.json
 .history
 
 # End of https://www.gitignore.io/api/venv,python,pycharm,pycharm+iml,pycharm+all,visualstudiocode
+*.csv
